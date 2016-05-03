@@ -4,7 +4,7 @@ import numpy as np
 from statsmodels.stats.multicomp import (pairwise_tukeyhsd,
                                          MultiComparison)
 
-import kin_plots_and_stats as kps
+#import kin_plots_and_stats as kps
 import scipy.stats as scistats
 import matplotlib.pyplot as plt
 

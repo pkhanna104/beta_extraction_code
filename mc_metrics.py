@@ -70,7 +70,7 @@ def get_CO_metrics(start_ind, msg, msg_time, trial, kinrow, TE_go_inds, rew_time
 		st_targ_tm = msg_time[ix+4]
 		targ = hdf.root.task[st_targ_tm+1]['target'][[0,2]]
 		assert not np.all(targ==0.) #Target is not at the origin
-		mc_vect = targ/np.sum(targ)
+		mc_vect = targ/np.linalg.norm(targ)
 		mc_vect_mat = np.tile(mc_vect[np.newaxis,:], (filt_vel.shape[0], 1))
 
 		#Now get kin_sig, kin_feat

@@ -1,3 +1,4 @@
+
 if __name__ == '__main__':
 
     import sys
@@ -11,16 +12,15 @@ if __name__ == '__main__':
                        t_range=[1, 2.5],\
                        spec_method='Welch',\
                        system='nucleus',\
-                       tasks=['lfp_mod_mc_reach_out']
-                       )
+                       tasks=['lfp_mod_mc_reach_out'])
 
-       import make_pytable_lfpmod_bmi3d as mp
-       lfpd = mp.lfp_task_data(**d)
-       lfpd.get_behavior(system='nucleus')
-       lfpd.get_lfpmod_behavior(system='nucleus')
-       lfpd.moving_window = [.251, .011]
-       kw = dict(t_range=[2.5, 1], channels=[124])
-       lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
+        import make_pytable_lfpmod_bmi3d as mp
+        lfpd = mp.lfp_task_data(**d)
+        lfpd.get_behavior(system='nucleus')
+        lfpd.get_lfpmod_behavior(system='nucleus')
+        lfpd.moving_window = [.251, .011]
+        kw = dict(t_range=[2.5, 1], channels=[124])
+        lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
     
     ###########################
     # Cart Prep 1: 
@@ -34,21 +34,20 @@ if __name__ == '__main__':
                        t_range=[1, 2.5],\
                        spec_method='Welch',\
                        system='nucleus',\
-                       tasks=['lfp_mod_mc_reach_out']
-                       )
-       import make_pytable_lfpmod_bmi3d as mp
-       lfpd = mp.lfp_task_data(**d)
-       lfpd.get_behavior(system='nucleus')
-       lfpd.get_lfpmod_behavior(system='nucleus')
-       lfpd.moving_window = [.251, .011]
-       kw = dict(t_range=[2.5, 1], channels=[124])
-       lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
+                       tasks=['lfp_mod_mc_reach_out'])
+        import make_pytable_lfpmod_bmi3d as mp
+        lfpd = mp.lfp_task_data(**d)
+        lfpd.get_behavior(system='nucleus')
+        lfpd.get_lfpmod_behavior(system='nucleus')
+        lfpd.moving_window = [.251, .011]
+        kw = dict(t_range=[2.5, 1], channels=[124])
+        lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
-    #For longer files: 
-       lfpd.neural_file_name = 'pap_rev_cart_behav_targ1_welch_neural_long_times'
-       lfpd.moving_window = [1.001, .011]
-       kw = dict(t_range=[3.5, 2], channels=[124])
-       lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
+        #For longer files: 
+        lfpd.neural_file_name = 'pap_rev_cart_behav_targ1_welch_neural_long_times'
+        lfpd.moving_window = [1.001, .011]
+        kw = dict(t_range=[3.5, 2], channels=[124])
+        lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
    # Old files: 
     # #Cart prep 1:

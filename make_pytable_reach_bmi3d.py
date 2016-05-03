@@ -31,10 +31,10 @@ class Neural_Hand_Reach(IsDescription):
 	trial_type = StringCol(2)
 	task_entry = IntCol()
 	start_time = IntCol()
-	neural_sig = Float32Col(shape=(3500,5)) #time x channels
+	#neural_sig = Float32Col(shape=(3500,5)) #time x channels
 	power_sig = Float32Col(shape =(296,129,5)) #time x freq x channel
-        long_neural_sig = Float32Col(shape=(5500, 5))
-        long_power_sig = Float32Col(shape = (409, 513, 5))
+    #long_neural_sig = Float32Col(shape=(5500, 5))
+    long_power_sig = Float32Col(shape = (409, 513, 5))
 
 class Neural_Hand_Reach_small_f_step(Neural_Hand_Reach):
 	trial_type = StringCol(2)
@@ -147,14 +147,14 @@ class manual_control_data(object):
 
 							tr, tm, ch = trials.shape
 							ptm, pf, pch = pxx.shape
-                                                        if long_trials:
-                                                            trl['long_neural_sig'] = trials[j, :, :]
-                                                            trl['long_power_sig'] = pxx 
-                                                        else:
-                                                            trl['neural_sig'] = trials[j,:,:]
+                            if long_trials:
+                            	#trl['long_neural_sig'] = trials[j, :, :]
+                            	trl['long_power_sig'] = pxx
+                            else:
+                            	#trl['neural_sig'] = trials[j,:,:]
 							    trl['power_sig'] = pxx
 							
-                                                        trl['trial_type'] = tsk
+                            trl['trial_type'] = tsk
 							trl['task_entry'] = te
 							trl['start_time'] = start_times[j]
 							trl.append()

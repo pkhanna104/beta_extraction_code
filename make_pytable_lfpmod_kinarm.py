@@ -245,23 +245,22 @@ if __name__ == "__main__":
         d['task_entry_dict_time_inds_fname'] = 'seba_prep_t1.mat'
         d['task_entry_dict_go'] = 'seba_prep_t1_GO.mat'
         d['behav_fname']='pap_rev_seba_behav_t1'
-        d['neur_fname'] = 'pap_rev_seba_neur_t1'
+        d['neur_fname'] = 'pap_rev_seba_neur_welch_t1'
 
-    elif arg_ind == 11:
-        d['dates'] = dict(lfp_mod_mc_reach_out = ['090314','090414','090514','110314'])
-        d['blocks'] = dict(lfp_mod_mc_reach_out= [['efghij'],['efg',],['bcdefg'],['bc']])
-        d['task_entry_dict_time_inds_fname'] = 'seba_prep_t1_power_control.mat'
-        d['task_entry_dict_go'] = 'seba_prep_t1_GO_power_control.mat'        
-        d['behav_fname']='pap_rev_seba_behav_t1_power_control'
-        d['neur_fname'] = 'pap_rev_seba_neur_t1_power_control'
+    # elif arg_ind == 11:
+    #     d['dates'] = dict(lfp_mod_mc_reach_out = ['090314','090414','090514','110314'])
+    #     d['blocks'] = dict(lfp_mod_mc_reach_out= [['efghij'],['efg',],['bcdefg'],['bc']])
+    #     d['task_entry_dict_time_inds_fname'] = 'seba_prep_t1_power_control.mat'
+    #     d['task_entry_dict_go'] = 'seba_prep_t1_GO_power_control.mat'        
+    #     d['behav_fname']='pap_rev_seba_behav_t1_power_control'
+    #     d['neur_fname'] = 'pap_rev_seba_neur_t1_power_control'
 
     if arg_ind == 12:
-        d['dates'] = dict(lfp_mod_mc_reach_out = ['082714','082814'])#,'082914'])
-        d['blocks'] = dict(lfp_mod_mc_reach_out= [['bc'], ['bc']]) #defg'], ['bcdefghij'], ['bcdefgh']])
-        d['task_entry_dict_time_inds_fname'] = 'seba_prep_t1.mat'
+        d['dates'] = dict(lfp_mod_mc_reach_out = ['082714','082814','082914'])
+        d['blocks'] = dict(lfp_mod_mc_reach_out= [['bcdefg'], ['bcdefghij'], ['bcdefgh']])
         d['task_entry_dict_go'] = 'seba_prep_t1_GO.mat'
         d['behav_fname']='pap_rev_seba_behav_t1_large_window'
-        d['neur_fname'] = 'pap_rev_seba_neur_t1_large_window'
+        d['neur_fname'] = 'pap_rev_seba_neur_welch_t1_large_window'
         d['moving_window'] = [1.001, .011]
         d['t_range'] = [2.5, 3]
 
@@ -271,15 +270,15 @@ if __name__ == "__main__":
         d['task_entry_dict_time_inds_fname'] = 'seba_prep_t3.mat'
         d['task_entry_dict_go'] = 'seba_prep_t3_GO.mat'
         d['behav_fname']='pap_rev_seba_behav_t3'
-        d['neur_fname'] = 'pap_rev_seba_neur_t3'
+        d['neur_fname'] = 'pap_rev_seba_neur_welch_t3'
 
-    elif arg_ind == 31:
-        d['dates'] = dict(lfp_mod_mc_reach_out = ['110314','110514','110614'])
-        d['blocks'] = dict(blocks = [['defgh'], ['bcdefghijk'], ['bcdefghijk']])
-        d['task_entry_dict_time_inds_fname'] = 'seba_prep_t3_power_control.mat'
-        d['task_entry_dict_go'] = 'seba_prep_t3_GO_power_control.mat' 
-        d['behav_fname']='pap_rev_seba_behav_t3_power_control'
-        d['neur_fname'] = 'pap_rev_seba_neur_t3_power_control'   
+    # elif arg_ind == 31:
+    #     d['dates'] = dict(lfp_mod_mc_reach_out = ['110314','110514','110614'])
+    #     d['blocks'] = dict(blocks = [['defgh'], ['bcdefghijk'], ['bcdefghijk']])
+    #     d['task_entry_dict_time_inds_fname'] = 'seba_prep_t3_power_control.mat'
+    #     d['task_entry_dict_go'] = 'seba_prep_t3_GO_power_control.mat' 
+    #     d['behav_fname']='pap_rev_seba_behav_t3_power_control'
+    #     d['neur_fname'] = 'pap_rev_seba_neur_welch_t3_power_control'   
 
     elif arg_ind == 32:
         d['dates'] = dict(lfp_mod_mc_reach_out = ['111414','111514','111714','111814'])
@@ -287,7 +286,7 @@ if __name__ == "__main__":
         d['task_entry_dict_time_inds_fname'] = 'seba_prep_t3_large_window.mat'
         d['task_entry_dict_go'] = 'seba_prep_t3_GO_large_window.mat'
         d['behav_fname']='pap_rev_seba_behav_t3_large_window'
-        d['neur_fname'] = 'pap_rev_seba_neur_t3_large_window'
+        d['neur_fname'] = 'pap_rev_seba_neur_welch_t3_large_window'
         d['moving_window'] = [1.001, .011]  
         d['t_range'] = [2.5, 3]
 

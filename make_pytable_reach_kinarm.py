@@ -18,7 +18,7 @@ class Behav_Hand_Reach_kinarm(Behav_Hand_Reach):
 class Neural_Hand_Reach_kinarm(Neural_Hand_Reach):
     task_entry = tables.StringCol(7)
     power_sig_kinarm = tables.Float32Col(shape =(296,129,1)) #time x freq x channel
-    long_neural_sig = tables.Float32Col(shape = (5500, 1))
+    #long_neural_sig = tables.Float32Col(shape = (5500, 1))
     long_power_sig_kinarm = tables.Float32Col(shape = (409, 513, 1) )
 
 
@@ -126,10 +126,10 @@ class kinarm_manual_control_data(object):
                             pxx[:,:,ic] = smtm['AD'+str(c)][i_t,:,:]
                             sgg[:,ic] = signal['AD'+str(c)][i_t,:]
                         if self.long_trials:
-                            trl['long_neural_sig'] = sgg
+                            #trl['long_neural_sig'] = sgg
                             trl['long_power_sig_kinarm'] = pxx
                         else:
-                            trl['neural_sig'] = sgg
+                            #trl['neural_sig'] = sgg
                             trl['power_sig_kinarm'] = pxx
 
                         trl['trial_type'] = tsk[0]

@@ -8,7 +8,7 @@ import scipy.io as sio
 import dbfunctions as dbfn
 import fcns
 import extract_cart_sdh as ecsdh
-from chance_1D_bmi3dLFP import calc_chance
+#from chance_1D_bmi3dLFP import calc_chance
 import datetime
 import multiprocessing
 
@@ -93,27 +93,28 @@ class Kin_Traces_LFP(IsDescription):
 class lfp_task_data(manual_control_data):
 	def __init__(self, *args, **kwargs):
 		super(lfp_task_data, self).__init__(*args,**kwargs)
-		self.tasks = ['lfp_mod','lfp_mod_plus_mc','lfp_mod_mc_reach_out']
+		self.tasks = kwargs.pop('tasks',['lfp_mod','lfp_mod_plus_mc','lfp_mod_mc_reach_out'])
 		self.behav_fname_kin= 'kin'+self.behav_fname
 
-	def get_behavior(self):
+	def get_behavior(self, system='sdh'):
 		##only for lfp_mc_plus_reach_out task: 
 		h5file = openFile(self.tdy_str + self.behav_fname_kin +'lfp_mod_mc_reach_out'+'.h5', mode="w", title='Cart, lfp_mc_behavior')
 		table_trial = h5file.createTable("/", 'trl_bhv', Behav_Hand_Reach_LFP, "Trial Behavior Table")
 		kin_table = h5file.createTable("/",'trl_kin',Kin_Traces_LFP,"Trial Kin Table")
-
-		tsk_te = self.task_entry_dict['lfp_mod_mc_reach_out']
-		t1, t2 = tsk_te.shape
-		if t1==1 and t2==1:
-			tsk_te = np.array([tsk_te[0,0]])
-		else:
-			tsk_te = np.squeeze(tsk_te)
+                t1, t2 = self.task_entry_dict['lfp_mod_mc_reach_out'].shape
+                if t1==1 and t2==1:
+                    tsk_te = np.array([self.task_entry_dict['lfp_mod_mc_reach_out'][0,0]])
+                else:
+                    tsk_te = np.squeeze(self.task_entry_dict['lfp_mod_mc_reach_out'])
 
 		for j, te in enumerate(tsk_te):
 			task_entry = dbfn.TaskEntry(te)
 			nm = task_entry.name
-			hdf = tables.openFile('/storage/bmi3d/rawdata/hdf/'+nm+'.hdf')
-			
+                        if system == 'sdh':
+			    hdf = tables.openFile('/storage/bmi3d/rawdata/hdf/'+nm+'.hdf')
+                        elif system == 'nucleus':
+                            hdf = tables.openFile('/storage/rawdata/hdf/'+nm+'.hdf')
+
 			rew_ind = np.array([i for i, t in enumerate(hdf.root.task_msgs[:]) if t[0]=='reward'])
 			mc_targ_ind = np.array([i for i, t in enumerate(hdf.root.task_msgs[:]) if t[0]=='mc_target'])
 
@@ -193,8 +194,15 @@ class lfp_task_data(manual_control_data):
 			h5file = openFile(self.tdy_str + self.behav_fname +tsk+'.h5', mode="w", title='Cart, lfp_behavior')
 			table_block = h5file.createTable("/", 'blk_bhv', Behav_LFPMod_TE, "Block Behavior Table")
 			table_trial = h5file.createTable("/", 'trl_bhv', Behav_LFPMod_Trial, "Trial Behavior Table")
+                        
+                        te_tsk = TE[tsk]
+                        t1, t2 = te_tsk.shape
+                        if t1==1 and t2==1:
+                            te_tsk = np.array([te_tsk[0,0]])
+                        else:
+                            te_tsk = np.squeeze(te_tsk)
 
-			for j, te in enumerate(np.squeeze(TE[tsk])):
+			for j, te in enumerate(te_tsk):
 				block = table_block.row
 				task_entry = dbfn.TaskEntry(te)
 				block['trial_type'] = task_entry.task.name
@@ -229,8 +237,8 @@ class lfp_task_data(manual_control_data):
 				block['tot_rew'] = len(rew_ind)
 
 				#Get chance
-				rew , ri, tl, act_rew = calc_chance(te,system=system)
-				block['chance_arr'] = rew
+				#rew , ri, tl, act_rew = calc_chance(te,system=system)
+				#block['chance_arr'] = rew
 
 				block.append()
 				
@@ -344,7 +352,7 @@ if __name__ == "__main__":
 	# 	t_range=[2.5, 1],\
 	# 	)
 
-	lfpd = mp.lfp_task_data(**d)
+	lfpd = lfp_task_data(**d)
 
 	#Get behav: 
 	lfpd.get_lfpmod_behavior()

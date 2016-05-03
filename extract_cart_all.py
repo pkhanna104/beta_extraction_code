@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
         lfpd.neural_file_name = 'pap_rev_cart_behav_targ3_welch_neural_long_times'
         lfpd.moving_window = [1.001, .011]
-        kw = dict(t_range=[3.5, 2], , channels=[124])
+        kw = dict(t_range=[3.5, 2], channels=[124])
         lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
 

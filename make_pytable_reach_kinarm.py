@@ -17,9 +17,9 @@ class Behav_Hand_Reach_kinarm(Behav_Hand_Reach):
 
 class Neural_Hand_Reach_kinarm(Neural_Hand_Reach):
     task_entry = tables.StringCol(7)
-    power_sig_kinarm = tables.Float32Col(shape =(296,129,1)) #time x freq x channel
+    power_sig_kinarm = tables.Float32Col(shape =(296,26)) #time x freq x channel
     #long_neural_sig = tables.Float32Col(shape = (5500, 1))
-    long_power_sig_kinarm = tables.Float32Col(shape = (409, 513, 1) )
+    long_power_sig_kinarm = tables.Float32Col(shape = (409, 103))
 
 
 class Kin_Traces_kinarm(Kin_Traces):
@@ -117,7 +117,8 @@ class kinarm_manual_control_data(object):
                             Smtm, f, t = ss.Welch_specgram(signal[ch_key].T, movingwin=moving_window)
                         smtm[ch_key] = Smtm
                     print 'SMTM SHAPE: ', Smtm.shape, signal[ch_key].shape
-                    
+                    f_trim = f[f< 100]
+                    f_trim_ix = f<100
                     for i_t in range(len(start_times)):
                         trl = table.row
                         pxx = np.zeros((Smtm.shape[1], Smtm.shape[2], len(self.channels)))
@@ -127,10 +128,10 @@ class kinarm_manual_control_data(object):
                             sgg[:,ic] = signal['AD'+str(c)][i_t,:]
                         if self.long_trials:
                             #trl['long_neural_sig'] = sgg
-                            trl['long_power_sig_kinarm'] = pxx
+                            trl['long_power_sig_kinarm'] = pxx[:, f_trim_ix, 0]
                         else:
                             #trl['neural_sig'] = sgg
-                            trl['power_sig_kinarm'] = pxx
+                            trl['power_sig_kinarm'] = pxx[:, f_trim_ix, 0]
 
                         trl['trial_type'] = tsk[0]
                         trl['task_entry'] = d+b

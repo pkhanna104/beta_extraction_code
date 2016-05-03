@@ -32,16 +32,16 @@ class Neural_Hand_Reach(IsDescription):
     task_entry = IntCol()
     start_time = IntCol()
     #neural_sig = Float32Col(shape=(3500,5)) #time x channels
-    power_sig = Float32Col(shape =(296,129,5)) #time x freq x channel
+    power_sig = Float32Col(shape =(296,26)) #time x freq x channel
     #long_neural_sig = Float32Col(shape=(5500, 5))
-    long_power_sig = Float32Col(shape = (409, 513, 5))
+    long_power_sig = Float32Col(shape = (409, 103))
 
 class Neural_Hand_Reach_small_f_step(Neural_Hand_Reach):
     trial_type = StringCol(2)
     task_entry = IntCol()
     start_time = IntCol()
-    neural_sig = Float32Col(shape=(3500,5)) #time x channels
-    power_sig = Float32Col(shape =(300,26,5)) #time x freq x channel
+    neural_sig = Float32Col(shape=(3500)) #time x channels
+    power_sig = Float32Col(shape =(300,26)) #time x freq x channel
 
 class Kin_Traces(IsDescription):
     cursor_traj = Float64Col(shape=(int(2000*(60./1000)), 2))
@@ -147,12 +147,15 @@ class manual_control_data(object):
 
                             tr, tm, ch = trials.shape
                             ptm, pf, pch = pxx.shape
+                            f_trim = freq[freq< 100]
+                            f_trim_ix = freq<100
+
                             if long_trials:
                                 #trl['long_neural_sig'] = trials[j, :, :]
-                                trl['long_power_sig'] = pxx
+                                trl['long_power_sig'] = pxx[:, f_trim_ix, 0]
                             else:
                                 #trl['neural_sig'] = trials[j,:,:]
-                                trl['power_sig'] = pxx
+                                trl['power_sig'] = pxx[:, f_trim_ix, 0]
                             
                             trl['trial_type'] = tsk
                             trl['task_entry'] = te

@@ -32,8 +32,9 @@ class Neural_Hand_Reach(IsDescription):
 	task_entry = IntCol()
 	start_time = IntCol()
 	neural_sig = Float32Col(shape=(3500,5)) #time x channels
-	#power_sig = Float32Col(shape =(300,20,5)) #time x freq x channel
-	power_sig = Float32Col(shape =(300,129,5)) #time x freq x channel
+	power_sig = Float32Col(shape =(296,129,5)) #time x freq x channel
+        long_neural_sig = Float32Col(shape=(5500, 5))
+        long_power_sig = Float32Col(shape = (409, 513, 5))
 
 class Neural_Hand_Reach_small_f_step(Neural_Hand_Reach):
 	trial_type = StringCol(2)
@@ -59,10 +60,15 @@ class manual_control_data(object):
 		self.task_entry_dict = sio.loadmat(self.task_entry_dict_fname)
 		self.task_entry_dict_time_inds_fname = self.task_entry_dict_fname[:-3]+'_start_inds.h5'
 		self.task_entry_dict_go_times_fname = kwargs['task_entry_dict_go']+'.mat'
+		if 'tasks' in kwargs.keys():
+			self.tasks = kwargs['tasks']
+		else:
+			self.tasks = ['S1','S4','M1','M4']
 
-		self.tasks = kwargs.pop('tasks', ['S1','S4','M1','M4'] )
-		self.system = kwargs.pop('system', 'sdh')
-
+		if 'system' in kwargs.keys():
+			self.system = kwargs['system']
+		else:
+			self.system = 'sdh'
 
 		self.tdy_str = datetime.date.today().isoformat()
 		self.spec_method = kwargs.pop('spec_method', 'MTM')
@@ -90,6 +96,15 @@ class manual_control_data(object):
 		if 'small_f_steps' in kwargs.keys():
 			self.neur_fname = self.neur_fname + 'small_f_steps'
 
+                if 't_range' in kwargs:
+                    t_range = kwargs['t_range']
+                else:
+                    t_range = [0.5, 3.5]
+    
+                if t_range[0]+t_range[1] > 3.5:
+                    long_trials = True
+                else:
+                    long_trials = False
 
 		bad_te = []
 		for tsk in task_name:
@@ -98,8 +113,13 @@ class manual_control_data(object):
 				table = h5file.createTable("/", 'neural', Neural_Hand_Reach_small_f_step, "Neural Table")
 			else:
 				table = h5file.createTable("/", 'neural', Neural_Hand_Reach, "Neural Table")
-			te_array = np.squeeze(task_entry_dict[tsk])
-			if len(te_array)>0:
+			t1, t2 = task_entry_dict[tsk].shape
+                        if t1==1 and t2==1:
+                            te_array = np.array([task_entry_dict[tsk][0,0]])
+                        else:
+                            te_array = np.squeeze(task_entry_dict[tsk])
+			
+                        if len(te_array)>0:
 				for te in te_array:
 					if str_flag:
 						start_times = np.squeeze(task_entry_plus_start_inds_dict[str((tsk, te))])
@@ -107,9 +127,11 @@ class manual_control_data(object):
 						start_times = np.squeeze(task_entry_plus_start_inds_dict[tsk, te])
 
 					kwargs['spec_method'] = self.spec_method
-					kwargs['moving_window'] = self.moving_window
 					kwargs['system'] = self.system
-					files_ok, power_dict, trials, channels, bins, freq = ecsdh.get_plx_with_hdf_inds(tsk, te, start_times,**kwargs) 
+                                        kwargs['moving_window'] = self.moving_window
+
+					
+                                        files_ok, power_dict, trials, channels, bins, freq = ecsdh.get_plx_with_hdf_inds(tsk, te, start_times,**kwargs) 
 					col = gc.collect() #garbage collector
 
 					if files_ok: 
@@ -125,9 +147,14 @@ class manual_control_data(object):
 
 							tr, tm, ch = trials.shape
 							ptm, pf, pch = pxx.shape
-							trl['neural_sig'] = trials[j,:,:]
-							trl['power_sig'] = pxx
-							trl['trial_type'] = tsk
+                                                        if long_trials:
+                                                            trl['long_neural_sig'] = trials[j, :, :]
+                                                            trl['long_power_sig'] = pxx 
+                                                        else:
+                                                            trl['neural_sig'] = trials[j,:,:]
+							    trl['power_sig'] = pxx
+							
+                                                        trl['trial_type'] = tsk
 							trl['task_entry'] = te
 							trl['start_time'] = start_times[j]
 							trl.append()
@@ -168,9 +195,9 @@ class manual_control_data(object):
 					hdf = tables.openFile('/Volumes/carmena/bmi3d/rawdata/hdf/'+nm+'.hdf')				
 				elif self.system == 'sdh':
 					hdf = tables.openFile('/storage/bmi3d/rawdata/hdf/'+nm+'.hdf')				
-				elif self.system == 'nucleus':
-					hdf = tables.openFile('/storage/rawdata/hdf/'+nm+'.hdf')	
-				else:
+                                elif self.system == 'nucleus':
+                                        hdf = tables.openFile('/storage/rawdata/hdf/'+nm+'.hdf')
+                                else:
 					print 'unrecognized system'
 
 				#Trial Starts: 
@@ -255,11 +282,10 @@ if __name__ == "__main__":
 
 	d = dict(behav_file_name='pap_rev_new_cart_behav',\
 			neural_file_name = 'pap_rev_new_cart_welch_neural',\
-			task_entry_dict_fname='task_entries_manual_control_cart.mat',\
-			task_entry_dict_go = 'task_entries_manual_control_cart._start_inds.mat',\
+			task_entry_dict_fname='task_entries_reaching_dec14.mat',\
+			task_entry_dict_go = 'task_entries_reaching_go_dec14.mat',\
 			t_range=[1, 2.5],\
-			spec_method='Welch',\
-			system='nucleus'
+			spec_method='Welch'
 			)
 
 	#d['task_entry_dict_fname'] = 'task_entries_trunc_dec14.mat'
@@ -270,8 +296,7 @@ if __name__ == "__main__":
 	mcd.get_behavior()
 
 
-	kw = dict(t_range=[1,2.5],use_go_file=True)
-	mcd.moving_window = [.251, .011]
+	kw = dict(t_range=[1,2.5],use_go_file=True,small_f_steps=True)
 
 	jobs = []
 	for tsk in mcd.tasks:

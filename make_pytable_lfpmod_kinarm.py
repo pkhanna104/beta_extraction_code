@@ -258,6 +258,7 @@ if __name__ == "__main__":
     if arg_ind == 12:
         d['dates'] = dict(lfp_mod_mc_reach_out = ['082714','082814','082914'])
         d['blocks'] = dict(lfp_mod_mc_reach_out= [['bcdefg'], ['bcdefghij'], ['bcdefgh']])
+	d['task_entry_dict_time_inds_fname'] = 'seba_prep_t1.mat'
         d['task_entry_dict_go'] = 'seba_prep_t1_GO.mat'
         d['behav_fname']='pap_rev_seba_behav_t1_large_window'
         d['neur_fname'] = 'pap_rev_seba_neur_welch_t1_large_window'

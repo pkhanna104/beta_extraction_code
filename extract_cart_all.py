@@ -130,6 +130,7 @@ if __name__ == '__main__':
         kw = dict(t_range=[1,2.5],use_go_file=True, spec_method='Welch')
         mcd.moving_window = [.251, .011]
         jobs = []
+        import multiprocessing
         for tsk in mcd.tasks:
             print 'tsk: ', tsk
             p = multiprocessing.Process(target=mcd.make_neural,args=([tsk],),kwargs=kw)

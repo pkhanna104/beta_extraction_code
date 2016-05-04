@@ -156,7 +156,7 @@ class lfp_task_data(manual_control_data):
 
 				targ = hdf.root.task[targ_ind+2]['mc_targ'][[0,2]]
 				assert not np.all(targ==0.) #Target is not at the origin
-				mc_vect = targ/np.sum(targ)
+				mc_vect = targ/np.linalg.norm(targ)
 				mc_vect_mat = np.tile(mc_vect[np.newaxis,:], (filt_vel.shape[0], 1))
 
 				#Now get kin_sig, kin_feat

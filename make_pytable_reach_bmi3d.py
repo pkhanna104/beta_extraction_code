@@ -103,8 +103,10 @@ class manual_control_data(object):
 
         if t_range[0]+t_range[1] > 3.5:
             long_trials = True
+            self.bp_filt = [.1, 55]
         else:
             long_trials = False
+            self.bp_filt = [10, 55]
 
         bad_te = []
         for tsk in task_name:
@@ -129,6 +131,7 @@ class manual_control_data(object):
                     kwargs['spec_method'] = self.spec_method
                     kwargs['system'] = self.system
                     kwargs['moving_window'] = self.moving_window
+                    kwargs['bp_filt'] = self.bp_filt
 
                     
                     files_ok, power_dict, trials, channels, bins, freq = ecsdh.get_plx_with_hdf_inds(tsk, te, start_times,**kwargs) 

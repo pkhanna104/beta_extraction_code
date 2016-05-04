@@ -65,8 +65,10 @@ class kinarm_manual_control_data(object):
 
         if before_go+after_go > 3.5:
             self.long_trials = True
+            self.bp_filt = [.10, 55]
         else:
             self.long_trials = False
+            self.bp_filt = [10, 55]
 
         if 'use_go_file' in kwargs.keys():
             try:
@@ -114,7 +116,7 @@ class kinarm_manual_control_data(object):
                             Smtm, f, t = ss.MTM_specgram(signal[ch_key].T,movingwin=moving_window)
                         elif self.spec_method == 'Welch':
                             print 'Using welch!'
-                            Smtm, f, t = ss.Welch_specgram(signal[ch_key].T, movingwin=moving_window)
+                            Smtm, f, t = ss.Welch_specgram(signal[ch_key].T, movingwin=moving_window, bp_filt=self.bp_filt)
                         smtm[ch_key] = Smtm
                     print 'SMTM SHAPE: ', Smtm.shape, signal[ch_key].shape
                     f_trim = f[f< 100]

@@ -113,3 +113,25 @@ if __name__ == '__main__':
         lfpd.moving_window = [1.001, .011]
         kw = dict(t_range=[3.5, 2], channels=[124])
         lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
+
+    elif arg_ind == 10:
+       d = dict(behav_file_name='pap_rev_new_MC_cart_behav',\
+               neural_file_name = 'pap_rev_new_MC_cart_welch_neural',\
+               task_entry_dict_fname='task_entries_manual_control_cart.mat',\
+               task_entry_dict_go = 'task_entries_manual_control_cart._start_inds.mat',\
+               t_range=[1, 2.5],\
+               spec_method='Welch',\
+               system='nucleus', \
+               tasks=['S1', 'M1']
+               )
+        import make_pytable_reach_bmi3d as mp
+        mcd = mp.manual_control_data(**d)
+        mcd.get_behavior()
+        kw = dict(t_range=[1,2.5],use_go_file=True, spec_method='Welch')
+        mcd.moving_window = [.251, .011]
+        jobs = []
+        for tsk in mcd.tasks:
+            print 'tsk: ', tsk
+            p = multiprocessing.Process(target=mcd.make_neural,args=([tsk],),kwargs=kw)
+            jobs.append(p)
+            p.start()

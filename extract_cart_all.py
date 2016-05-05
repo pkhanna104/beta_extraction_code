@@ -38,10 +38,10 @@ if __name__ == '__main__':
         import make_pytable_lfpmod_bmi3d as mp
         lfpd = mp.lfp_task_data(**d)
         lfpd.get_behavior(system='nucleus')
-#        lfpd.get_lfpmod_behavior(system='nucleus')
-#        lfpd.moving_window = [.251, .011]
-#        kw = dict(t_range=[2.5, 1], channels=[124])
-#        lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
+        lfpd.get_lfpmod_behavior(system='nucleus')
+        lfpd.moving_window = [.251, .011]
+        kw = dict(t_range=[2.5, 1], channels=[124])
+        lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
         #For longer files: 
         lfpd.neur_fname = 'pap_rev_cart_behav_targ1_welch_neural_long_times'

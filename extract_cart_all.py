@@ -137,3 +137,29 @@ if __name__ == '__main__':
             jobs.append(p)
             p.start()
 
+    elif arg_ind == 11:
+        d = dict(behav_file_name='pap_rev_cart_xy_behav',\
+               neural_file_name = 'pap_rev_cart_xy_welch_neural',\
+               task_entry_dict_fname='task_entries_cart_xy.mat',\
+               task_entry_dict_go = 'ttask_entries_cart_xy_GO.mat',\
+               t_range=[1, 2.5],\
+               spec_method='Welch',\
+               system='nucleus', \
+               tasks=['lfp_mod_mc_reach_out'], \
+               )
+        import make_pytable_reach_bmi3d as mp
+        mcd = mp.manual_control_data(**d)
+        mcd.get_behavior()
+        kw = dict(t_range=[1,2.5],use_go_file=True, spec_method='Welch')
+        mcd.moving_window = [.251, .011]
+        jobs = []
+        import multiprocessing
+        for tsk in mcd.tasks:
+            print 'tsk: ', tsk
+            p = multiprocessing.Process(target=mcd.make_neural,args=([tsk],),kwargs=kw)
+            jobs.append(p)
+            p.start()
+
+        
+
+

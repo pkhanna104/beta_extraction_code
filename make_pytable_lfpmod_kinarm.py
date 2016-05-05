@@ -247,18 +247,18 @@ if __name__ == "__main__":
         d['behav_fname']='pap_rev_seba_behav_t1'
         d['neur_fname'] = 'pap_rev_seba_neur_welch_t1'
 
-    # elif arg_ind == 11:
-    #     d['dates'] = dict(lfp_mod_mc_reach_out = ['090314','090414','090514','110314'])
-    #     d['blocks'] = dict(lfp_mod_mc_reach_out= [['efghij'],['efg',],['bcdefg'],['bc']])
-    #     d['task_entry_dict_time_inds_fname'] = 'seba_prep_t1_power_control.mat'
-    #     d['task_entry_dict_go'] = 'seba_prep_t1_GO_power_control.mat'        
-    #     d['behav_fname']='pap_rev_seba_behav_t1_power_control'
-    #     d['neur_fname'] = 'pap_rev_seba_neur_t1_power_control'
+    elif arg_ind == 11:
+        d['dates'] = dict(lfp_mod_mc_reach_out = ['090314','090414','090514']) #,'110314'])
+        d['blocks'] = dict(lfp_mod_mc_reach_out= [['efghij'],['efg',],['bcdefg']]) #,['bc']])
+        d['task_entry_dict_time_inds_fname'] = 'seba_prep_t1_power_control.mat'
+        d['task_entry_dict_go'] = 'seba_prep_t1_GO_power_control.mat'        
+        d['behav_fname']='pap_rev_seba_behav_t1_power_control'
+        d['neur_fname'] = 'pap_rev_seba_neur_t1_power_control'
 
-    if arg_ind == 12:
+    elif arg_ind == 12:
         d['dates'] = dict(lfp_mod_mc_reach_out = ['082714','082814','082914'])
         d['blocks'] = dict(lfp_mod_mc_reach_out= [['bcdefg'], ['bcdefghij'], ['bcdefgh']])
-	d['task_entry_dict_time_inds_fname'] = 'seba_prep_t1.mat'
+        d['task_entry_dict_time_inds_fname'] = 'seba_prep_t1.mat'
         d['task_entry_dict_go'] = 'seba_prep_t1_GO.mat'
         d['behav_fname']='pap_rev_seba_behav_t1_large_window'
         d['neur_fname'] = 'pap_rev_seba_neur_welch_t1_large_window'
@@ -273,13 +273,13 @@ if __name__ == "__main__":
         d['behav_fname']='pap_rev_seba_behav_t3'
         d['neur_fname'] = 'pap_rev_seba_neur_welch_t3'
 
-    # elif arg_ind == 31:
-    #     d['dates'] = dict(lfp_mod_mc_reach_out = ['110314','110514','110614'])
-    #     d['blocks'] = dict(blocks = [['defgh'], ['bcdefghijk'], ['bcdefghijk']])
-    #     d['task_entry_dict_time_inds_fname'] = 'seba_prep_t3_power_control.mat'
-    #     d['task_entry_dict_go'] = 'seba_prep_t3_GO_power_control.mat' 
-    #     d['behav_fname']='pap_rev_seba_behav_t3_power_control'
-    #     d['neur_fname'] = 'pap_rev_seba_neur_welch_t3_power_control'   
+    elif arg_ind == 31:
+        d['dates'] = dict(lfp_mod_mc_reach_out = ['110314','110514','110614'])
+        d['blocks'] = dict(blocks = [['defgh'], ['bcdefghijk'], ['bcdefghijk']])
+        d['task_entry_dict_time_inds_fname'] = 'seba_prep_t3_power_control.mat'
+        d['task_entry_dict_go'] = 'seba_prep_t3_GO_power_control.mat' 
+        d['behav_fname']='pap_rev_seba_behav_t3_power_control'
+        d['neur_fname'] = 'pap_rev_seba_neur_welch_t3_power_control'   
 
     elif arg_ind == 32:
         d['dates'] = dict(lfp_mod_mc_reach_out = ['111414','111514','111714','111814'])
@@ -291,7 +291,41 @@ if __name__ == "__main__":
         d['moving_window'] = [1.001, .011]  
         d['t_range'] = [2.5, 3]
 
-    mcd = kinarm_lfpmod_data(**d)
+    #GROMIT:
+    elif arg_ind == 40:
+        d['dates'] = dict(lfp_mod_mc_reach_out = ['022315', '022415','022515','022615','022715','022815','030215'])
+        d['blocks'] = dict(lfp_mod_mc_reach_out= [['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bcdef'],['defghi'],['cdefg']])
+        # BLOCKS=[['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bd'],['defghi'],['cdefg']]
+
+        d['task_entry_dict_time_inds_fname'] = 'grom_prep_t1.mat'
+        d['task_entry_dict_go'] = 'grom_prep_t1_GO.mat'
+        d['behav_fname']='pap_rev_grom_behav_t1'
+        d['neur_fname'] = 'pap_rev_grom_neur_welch_t1'
+        d['anim'] = 'grom'
+
+    elif arg_ind == 42:
+        d['dates'] = dict(lfp_mod_mc_reach_out = ['022315', '022415','022515','022615','022715','022815','030215'])
+        d['blocks'] = dict(lfp_mod_mc_reach_out= [['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bcdef'],['defghi'],['cdefg']])
+        # BLOCKS=[['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bd'],['defghi'],['cdefg']]
+
+        d['task_entry_dict_time_inds_fname'] = 'grom_prep_t1_large_window.mat'
+        d['task_entry_dict_go'] = 'grom_prep_t1_GO_large_window.mat'
+        d['behav_fname']='pap_rev_grom_behav_t1_large_window'
+        d['neur_fname'] = 'pap_rev_grom_neur_welch_t1_large_window'
+        d['anim'] = 'grom'
+
+    #GROM XY Control: 
+    elif arg_ind == 43:
+        d['dates'] = dict(lfp_mod_mc_reach_out = ['051115','051215','051315','051415','051515'])
+        d['blocks'] = dict(lfp_mod_mc_reach_out= [['bcdef'], ['bcdf'],['bcd'],['bc'],['bcdefg']])
+        # BLOCKS=[['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bd'],['defghi'],['cdefg']]
+        d['task_entry_dict_time_inds_fname'] = 'grom_prep_xy_t1.mat'
+        d['task_entry_dict_go'] = 'grom_prep_xy_t1_GO.mat'
+        d['behav_fname']='pap_rev_grom_behav_xy_t1'
+        d['neur_fname'] = 'pap_rev_grom_neur_welch_xy_t1'
+        d['anim'] = 'grom'
+
+    mcd = mp.kinarm_lfpmod_data(**d)
     
     #Get behav: 
     mcd.get_behavior()

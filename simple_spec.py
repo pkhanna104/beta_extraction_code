@@ -93,6 +93,8 @@ def Welch_specgram(data, movingwin=[0.2, 0.050], bp_filt = [10, 55], **kwargs):
 	else:
 		pad = 0
 
+	print 'bp_filt: ', bp_filt
+
 	#First BP filter: 
 	nyq = 0.5* Fs
 	bw_b, bw_a = scisig.butter(5, [bp_filt[0]/nyq, bp_filt[1]/nyq], btype='band')

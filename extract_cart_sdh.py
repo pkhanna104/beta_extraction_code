@@ -406,7 +406,11 @@ def get_cursor(task_ts, hdf, t_range= [2.5, 1.5], Task_fs =60):
 
 def get_power(trials, channels, type='MTM', moving_window = [0.201, 0.011],small_f_steps = False, **kwargs):
     ''' trials : trials x time x channel '''
-
+    
+    if 'bp_filt' in kwargs:
+        bp_filt = kwargs['bp_filt']
+    else:
+        bp_filt = [10, 55]
 
     Pxx = dict()
     for c, chan in enumerate(channels):
@@ -421,7 +425,8 @@ def get_power(trials, channels, type='MTM', moving_window = [0.201, 0.011],small
             S, f, t = ss.DFT_PSD(trials[:,:,c].T,movingwin=moving_window)
         
         elif type == 'Welch':
-            S, f, t = ss.Welch_specgram(trials[:,:,c].T, movingwin=moving_window)
+
+            S, f, t = ss.Welch_specgram(trials[:,:,c].T, movingwin=moving_window, bp_filt=bp_filt)
 
         
         Pxx[str(chan)] = S

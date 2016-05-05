@@ -54,7 +54,7 @@ class kinarm_manual_control_data(object):
         tdy = datetime.date.today()
         self.tdy_str = tdy.isoformat()
         self.moving_window = kwargs.pop('moving_window', [.251, .011])
-
+        self.anim = kwargs.pop('anim', 'seba')
     def make_neural(self, task_name, **kwargs):
         if 't_range' in kwargs.keys():
             before_go = kwargs['t_range'][0]
@@ -111,7 +111,9 @@ class kinarm_manual_control_data(object):
                     smtm = dict()
                     for c,ch in enumerate(self.channels):
                         ch_key = 'AD'+str(ch)
-                        signal[ch_key], _ = sm.get_sig([d],[b],start_times,[len(start_times)],before_go=before_go, after_go=after_go, channel=ch_key)
+                        signal[ch_key], _ = sm.get_sig([d],[b],start_times,[len(start_times)],before_go=before_go, after_go=after_go, 
+                            channel=ch_key, anim=self.anim)
+
                         if self.spec_method == 'MTM':
                             Smtm, f, t = ss.MTM_specgram(signal[ch_key].T,movingwin=moving_window)
                         elif self.spec_method == 'Welch':

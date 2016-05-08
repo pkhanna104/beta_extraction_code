@@ -26,7 +26,7 @@ class Neural_Hand_Reach_kinarm_neur_only(tables.IsDescription):
     long_neural_sig = tables.Float32Col(shape = (5500, 1))
     neural_sig = tables.Float32Col(shape = (3500, 1))   
     trial_type = tables.StringCol(2)
-    task_entry = tables.IntCol()
+    task_entry = tables.StringCol(7)
     start_time = tables.IntCol()
 
 class Kin_Traces_kinarm(Kin_Traces):

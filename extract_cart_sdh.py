@@ -116,7 +116,7 @@ def get_plx_with_hdf_inds(task_type, te_num, hdf_inds, channels=[124, 126, 252, 
             power_dict['bins'] = Pxx['bins']
             power_dict['freq'] = Pxx['freq']
             power_dict['channels'] = Pxx['chan_ord']
-            return files_ok, power_dict, trials, channels, Pxx['bins'], Pxx['freq']
+        return files_ok, power_dict, trials, channels, Pxx['bins'], Pxx['freq']
     else: 
         return files_ok, 0, 0, 0, 0, 0
     

@@ -80,6 +80,7 @@ class manual_control_data(object):
         self.tdy_str = datetime.date.today().isoformat()
         self.spec_method = kwargs.pop('spec_method', 'MTM')
         self.moving_window = kwargs.pop('moving_window', [.201, .011])
+        self.neural_sig_only = kwargs.pop('neural_sig_only', False)
 
 
     def make_neural(self, task_name, **kwargs):
@@ -115,7 +116,7 @@ class manual_control_data(object):
             long_trials = False
             self.bp_filt = [10, 55]
 
-        get_neural_only = kwargs.pop('get_neural_only', False)
+        get_neural_only = self.neural_sig_only
 
         bad_te = []
         for tsk in task_name:

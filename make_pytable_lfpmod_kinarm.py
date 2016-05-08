@@ -330,7 +330,7 @@ if __name__ == "__main__":
         d['anim'] = 'grom'
         d['channels'] = [74]
 
-    #mcd = kinarm_lfpmod_data(**d) #COMMENTED 5-7 to produce ONLY neural signal files!
+    mcd = kinarm_lfpmod_data(**d) #COMMENTED 5-7 to produce ONLY neural signal files!
     
     #Get behav: 
     #mcd.get_behavior() #COMMENTED 5-7 to produce ONLY neural signal files!

@@ -11,6 +11,7 @@ import scipy.io as sio
 import numpy as np
 import fcns
 import datetime
+import tables
 
 class Behav_Hand_Reach_kinarm(Behav_Hand_Reach):
     task_entry = tables.StringCol(7)
@@ -21,6 +22,12 @@ class Neural_Hand_Reach_kinarm(Neural_Hand_Reach):
     #long_neural_sig = tables.Float32Col(shape = (5500, 1))
     long_power_sig_kinarm = tables.Float32Col(shape = (409, 103))
 
+class Neural_Hand_Reach_kinarm_neur_only(tables.IsDescription):
+    long_neural_sig = tables.Float32Col(shape = (5500, 1))
+    neural_sig = tables.Float32Col(shape = (3500, 1))   
+    trial_type = StringCol(2)
+    task_entry = IntCol()
+    start_time = IntCol()
 
 class Kin_Traces_kinarm(Kin_Traces):
     task_entry = tables.StringCol(7)
@@ -31,6 +38,9 @@ class kinarm_manual_control_data(object):
         self.dates = kwargs['dates'] #dictionary of dates
         self.blocks = kwargs['blocks'] #dictionary of blocks
         self.direct = '/Volumes/TimeMachineBackups/Seba_MC_mat_files/'
+        self.anim = kwargs.pop('anim', 'seba')
+        print self.anim
+
         if 'tasks' not in kwargs.keys():
             self.tasks = ['S1','S4','M1','M4']
         else:
@@ -40,8 +50,10 @@ class kinarm_manual_control_data(object):
 
         #check files and kin files are made and all channels are present: 
         for tsk in self.tasks:
-            e = parse.epoch(dates = self.dates[tsk], blocks=self.blocks[tsk], chans = self.channels, kin_only = False)
-            ek = parse.epoch(dates = self.dates[tsk], blocks=self.blocks[tsk], kin_only = True)
+            e = parse.epoch(dates = self.dates[tsk], blocks=self.blocks[tsk], chans = self.channels, 
+                kin_only = False, anim=self.anim)
+            ek = parse.epoch(dates = self.dates[tsk], blocks=self.blocks[tsk], kin_only = True,
+                anim=self.anim)
             e.mat_file_check()
             ek.mat_file_check()
 
@@ -54,7 +66,7 @@ class kinarm_manual_control_data(object):
         tdy = datetime.date.today()
         self.tdy_str = tdy.isoformat()
         self.moving_window = kwargs.pop('moving_window', [.251, .011])
-        self.anim = kwargs.pop('anim', 'seba')
+
     def make_neural(self, task_name, **kwargs):
         if 't_range' in kwargs.keys():
             before_go = kwargs['t_range'][0]
@@ -69,6 +81,10 @@ class kinarm_manual_control_data(object):
         else:
             self.long_trials = False
             self.bp_filt = [10, 55]
+
+        neural_sig_only = kwargs.pop('neural_sig_only', False)
+        if neural_sig_only:
+            self.neur_fname = self.neur_fname + 'neur_sig_only_'
 
         if 'use_go_file' in kwargs.keys():
             try:
@@ -98,7 +114,11 @@ class kinarm_manual_control_data(object):
             tdy_str = tdy.isoformat()
 
             h5file = tables.openFile(self.tdy_str + self.neur_fname + tsk + '.h5', mode="w", title='Seba, neural')
-            table = h5file.createTable("/", 'neural', Neural_Hand_Reach_kinarm, "Neural Table")
+
+            if neural_sig_only:
+                table = h5file.createTable("/", 'neural', Neural_Hand_Reach_kinarm_neur_only, "Neural Table")
+            else:
+                table = h5file.createTable("/", 'neural', Neural_Hand_Reach_kinarm, "Neural Table")
             
             for i_d, d in enumerate(dats):
                 for i_b, b in enumerate(blks[i_d][0]):
@@ -106,46 +126,65 @@ class kinarm_manual_control_data(object):
                         start_times = np.squeeze(np.array(task_entry_dict_time_inds[str((tsk, d, b))]))
                     else:
                         start_times = np.squeeze(np.array(task_entry_dict_time_inds[tsk, d, b]))
+                    
                     mat = sio.loadmat(self.direct+'seba'+d+b+'.mat')
                     signal = dict()
                     smtm = dict()
+                    
                     for c,ch in enumerate(self.channels):
                         ch_key = 'AD'+str(ch)
+                        print 'I . AM', self.anim, '-ador'
                         signal[ch_key], _ = sm.get_sig([d],[b],start_times,[len(start_times)],before_go=before_go, after_go=after_go, 
                             channel=ch_key, anim=self.anim)
 
-                        if self.spec_method == 'MTM':
-                            Smtm, f, t = ss.MTM_specgram(signal[ch_key].T,movingwin=moving_window)
-                        elif self.spec_method == 'Welch':
-                            print 'Using welch!'
-                            Smtm, f, t = ss.Welch_specgram(signal[ch_key].T, movingwin=moving_window, bp_filt=self.bp_filt)
-                        smtm[ch_key] = Smtm
-                    print 'SMTM SHAPE: ', Smtm.shape, signal[ch_key].shape
+                        if neural_sig_only:
+                            print 'skipping spec stuff'
+                            f = np.arange(1, 100)
+                        
+                        else:
+                            if self.spec_method == 'MTM':
+                                Smtm, f, t = ss.MTM_specgram(signal[ch_key].T,movingwin=moving_window)
+                            elif self.spec_method == 'Welch':
+                                print 'Using welch!'
+                                Smtm, f, t = ss.Welch_specgram(signal[ch_key].T, movingwin=moving_window, bp_filt=self.bp_filt)
+                            smtm[ch_key] = Smtm
+
                     f_trim = f[f< 100]
                     f_trim_ix = f<100
+
                     for i_t in range(len(start_times)):
                         trl = table.row
-                        pxx = np.zeros((Smtm.shape[1], Smtm.shape[2], len(self.channels)))
-                        sgg = np.zeros((signal[ch_key].shape[1], len(self.channels)))
-                        for ic, c in enumerate(self.channels):
-                            pxx[:,:,ic] = smtm['AD'+str(c)][i_t,:,:]
-                            sgg[:,ic] = signal['AD'+str(c)][i_t,:]
-                        if self.long_trials:
-                            #trl['long_neural_sig'] = sgg
-                            trl['long_power_sig_kinarm'] = pxx[:, f_trim_ix, 0]
+                        if neural_sig_only:
+                            if self.long_trials:
+                                trl['long_neural_sig'] = sgg
+                            else:
+                                trl['neural_sig'] = sgg
                         else:
-                            #trl['neural_sig'] = sgg
-                            trl['power_sig_kinarm'] = pxx[:, f_trim_ix, 0]
+                            pxx = np.zeros((Smtm.shape[1], Smtm.shape[2], len(self.channels)))
+                            sgg = np.zeros((signal[ch_key].shape[1], len(self.channels)))
+                            for ic, c in enumerate(self.channels):
+                                pxx[:,:,ic] = smtm['AD'+str(c)][i_t,:,:]
+                                sgg[:,ic] = signal['AD'+str(c)][i_t,:]
+                            if self.long_trials:
+                                #trl['long_neural_sig'] = sgg
+                                trl['long_power_sig_kinarm'] = pxx[:, f_trim_ix, 0]
+                            else:
+                                #trl['neural_sig'] = sgg
+                                trl['power_sig_kinarm'] = pxx[:, f_trim_ix, 0]
 
                         trl['trial_type'] = tsk[0]
                         trl['task_entry'] = d+b
                         trl['start_time'] = np.squeeze(start_time_dict[str((tsk, d, b))])[i_t]
                         trl.append()
                     table.flush()
-            add_cols = h5file.createGroup(h5file.root, "columns", "Channels, Freq, Bins")
-            h5file.createArray(add_cols, 'channels', np.array(self.channels))
-            h5file.createArray(add_cols, 'freq', f)
-            h5file.createArray(add_cols, 'bins', t)
+            if neural_sig_only:
+                add_cols = h5file.createGroup(h5file.root, "columns", "t_range")
+                h5file.createArray(add_cols, 't_range', np.array([before_go, after_go]))
+            else:
+                add_cols = h5file.createGroup(h5file.root, "columns", "Channels, Freq, Bins")
+                h5file.createArray(add_cols, 'channels', np.array(self.channels))
+                h5file.createArray(add_cols, 'freq', f)
+                h5file.createArray(add_cols, 'bins', t)
             h5file.close()
 
     def get_behavior(self):

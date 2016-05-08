@@ -91,6 +91,11 @@ def get_plx_with_hdf_inds(task_type, te_num, hdf_inds, channels=[124, 126, 252, 
     else:
         files_ok, plx, hdf, ts_func = load_session(nm)
 
+    if 'get_neural_only' in kwargs.keys():
+        get_neural_only = kwargs['get_neural_only']
+    else:
+        get_neural_only = False
+
     if files_ok: 
         plx_ts = ts_func(hdf_inds,'plx')
         trials, channels = get_trials(plx_ts, plx,t_range=t_range, channels=channels)
@@ -98,17 +103,20 @@ def get_plx_with_hdf_inds(task_type, te_num, hdf_inds, channels=[124, 126, 252, 
         if 'small_f_steps' in kwargs.keys():
             kwargs['small_f_steps'] = True
         kwargs['type'] = kwargs['spec_method']
-        Pxx = get_power(trials, channels, **kwargs)
-
         power_dict = dict()
-            
-        for c,chan in enumerate(channels):
-            power_dict[task_type,chan] = Pxx[str(chan)]
-            
-        power_dict['bins'] = Pxx['bins']
-        power_dict['freq'] = Pxx['freq']
-        power_dict['channels'] = Pxx['chan_ord']
-        return files_ok, power_dict, trials, channels, Pxx['bins'], Pxx['freq']
+
+        if get_neural_only:
+            print 'skipping PXX'
+            Pxx=dict(bins=0, freq=0)
+        else:
+            Pxx = get_power(trials, channels, **kwargs)
+            for c,chan in enumerate(channels):
+                power_dict[task_type,chan] = Pxx[str(chan)]
+                
+            power_dict['bins'] = Pxx['bins']
+            power_dict['freq'] = Pxx['freq']
+            power_dict['channels'] = Pxx['chan_ord']
+            return files_ok, power_dict, trials, channels, Pxx['bins'], Pxx['freq']
     else: 
         return files_ok, 0, 0, 0, 0, 0
     

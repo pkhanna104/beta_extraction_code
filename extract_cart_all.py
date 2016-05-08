@@ -19,7 +19,7 @@ if __name__ == '__main__':
         lfpd.get_behavior(system='nucleus')
         lfpd.get_lfpmod_behavior(system='nucleus')
         lfpd.moving_window = [.251, .011]
-        kw = dict(t_range=[2.5, 1], channels=[124])
+        kw = dict(t_range=[2.5, 1], channels=[124, 33, 1])
         lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
     
     ###########################
@@ -40,13 +40,17 @@ if __name__ == '__main__':
         lfpd.get_behavior(system='nucleus')
         lfpd.get_lfpmod_behavior(system='nucleus')
         lfpd.moving_window = [.251, .011]
-        kw = dict(t_range=[2.5, 1], channels=[124])
+#<<<<<<< HEAD
+#        kw = dict(t_range=[2.5, 1], channels=[124])
+#=======
+        kw = dict(t_range=[2.5, 1], channels=[124, 33, 1], get_neural_only=True)
+#>>>>>>> dde57d12fb13ba392dfba9ece1e3addca61e50bc
         lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
         #For longer files: 
         lfpd.neur_fname = 'pap_rev_cart_behav_targ1_welch_neural_long_times'
         lfpd.moving_window = [1.001, .011]
-        kw = dict(t_range=[3.5, 2], channels=[124])
+        kw = dict(t_range=[3.5, 2], channels=[124, 33, 1], get_neural_only=True)
         lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
    # Old files: 
@@ -69,19 +73,20 @@ if __name__ == '__main__':
                        t_range=[1, 2.5],\
                        spec_method='Welch',\
                        system='nucleus',\
-                       tasks=['lfp_mod_mc_reach_out']
+                       tasks=['lfp_mod_mc_reach_out'],
+                       neural_sig_only=True
                        )
         import make_pytable_lfpmod_bmi3d as mp
         lfpd = mp.lfp_task_data(**d)
         lfpd.get_behavior(system='nucleus')
         lfpd.get_lfpmod_behavior(system='nucleus')
         lfpd.moving_window = [.251, .011]
-        kw = dict(t_range=[2.5, 1], channels=[124])
+        kw = dict(t_range=[2.5, 1], channels=[124, 33, 1], get_neural_only=True)
         lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
         lfpd.neur_fname = 'pap_rev_cart_behav_targ3_welch_neural_long_times'
         lfpd.moving_window = [1.001, .011]
-        kw = dict(t_range=[3.5, 2], channels=[124])
+        kw = dict(t_range=[3.5, 2], channels=[124, 33, 1], get_neural_only=True)
         lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
 
@@ -99,19 +104,20 @@ if __name__ == '__main__':
                        t_range=[1, 2.5],\
                        spec_method='Welch',\
                        system='nucleus',\
-                       tasks=['lfp_mod_mc_reach_out']
+                       tasks=['lfp_mod_mc_reach_out'],
+                       neural_sig_only=True
                        )
         import make_pytable_lfpmod_bmi3d as mp
         lfpd = mp.lfp_task_data(**d)
         lfpd.get_behavior(system='nucleus')
         lfpd.get_lfpmod_behavior(system='nucleus')
         lfpd.moving_window = [.251, .011]
-        kw = dict(t_range=[2.5, 1], channels=[124])
+        kw = dict(t_range=[2.5, 1], channels=[124, 33, 1], get_neural_only=True)
         lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
         lfpd.neur_fname = 'pap_rev_cart_behav_targ7_welch_neural_long_times'
         lfpd.moving_window = [1.001, .011]
-        kw = dict(t_range=[3.5, 2], channels=[124])
+        kw = dict(t_range=[3.5, 2], channels=[124, 33, 1], get_neural_only=True)
         lfpd.make_neural(['lfp_mod_mc_reach_out'], **kw)
 
     elif arg_ind == 10:
@@ -122,7 +128,8 @@ if __name__ == '__main__':
                t_range=[1, 2.5],\
                spec_method='Welch',\
                system='nucleus', \
-               tasks=['S1', 'M1']
+               tasks=['S1', 'M1'],
+               neural_sig_only=True
                )
         import make_pytable_reach_bmi3d as mp
         mcd = mp.manual_control_data(**d)
@@ -145,7 +152,8 @@ if __name__ == '__main__':
                t_range=[1, 2.5],\
                spec_method='Welch',\
                system='nucleus', \
-               tasks=['lfp_mod_mc_reach_out'], \
+               tasks=['lfp_mod_mc_reach_out'],
+               neural_sig_only=True
                )
         import make_pytable_reach_bmi3d as mp
         mcd = mp.manual_control_data(**d)

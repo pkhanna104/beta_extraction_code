@@ -50,7 +50,7 @@ class kinarm_lfpmod_data(kinarm_manual_control_data):
                     task_go_times[tsk, day, bl] = []
                     task_start_times[tsk, day, bl] = []
 
-                    mat_fl = sio.loadmat(self.direct+'seba'+day+bl+'.mat')
+                    mat_fl = sio.loadmat(self.direct+self.anim+day+bl+'.mat')
                     strobed = mat_fl['Strobed'][:,1]
                     strobed_tm = mat_fl['Strobed'][:,0]
 
@@ -115,7 +115,8 @@ class kinarm_lfpmod_data(kinarm_manual_control_data):
                             #Cursor trajectory: 
                             kw = dict(target_coding='standard')
 
-                            kin_sig, targ_dir = sm.get_sig([day], [[bl]], np.array([go_cue_time]), [1], signal_type='shenoy_jt_vel',mc_lab = np.array([mc]), prep=True,**kw)
+                            kin_sig, targ_dir = sm.get_sig([day], [[bl]], np.array([go_cue_time]), [1], signal_type='shenoy_jt_vel',
+                                mc_lab = np.array([mc]), prep=True,anim = self.anim, **kw)
                             kin_feat = pm.get_kin_sig_shenoy(kin_sig) #Kin feats #Take index #2: 
                             
                             trial['target_loc_mc'] = targ_dir[0,:]
@@ -183,7 +184,7 @@ class kinarm_lfpmod_data(kinarm_manual_control_data):
 
             for d, day in enumerate(self.dates[tsk]):
                 for b, bl in enumerate(self.blocks[tsk][d][0]):
-                    mat_fl = sio.loadmat(self.direct+'seba'+day+bl+'.mat')
+                    mat_fl = sio.loadmat(self.direct+self.anim+day+bl+'.mat')
                     strobed = mat_fl['Strobed'][:,1]
                     strobed_tm = mat_fl['Strobed'][:,0]
 
@@ -235,7 +236,8 @@ if __name__ == "__main__":
         tasks = ['lfp_mod_mc_reach_out'],\
         spec_method='Welch',\
         moving_window = [.251, .011], \
-        t_range = [1.5, 2]
+        t_range = [1.5, 2], 
+        neural_sig_only=True, #ADDED 5-7 to produce ONLY neural signal files!
         )
 
     arg_ind = int(sys.argv[1])
@@ -275,7 +277,7 @@ if __name__ == "__main__":
 
     elif arg_ind == 31:
         d['dates'] = dict(lfp_mod_mc_reach_out = ['110314','110514','110614'])
-        d['blocks'] = dict(blocks = [['defgh'], ['bcdefghijk'], ['bcdefghijk']])
+        d['blocks'] = dict(lfp_mod_mc_reach_out = [['defgh'], ['bcdefghijk'], ['bcdefghijk']])
         d['task_entry_dict_time_inds_fname'] = 'seba_prep_t3_power_control.mat'
         d['task_entry_dict_go'] = 'seba_prep_t3_GO_power_control.mat' 
         d['behav_fname']='pap_rev_seba_behav_t3_power_control'
@@ -294,7 +296,7 @@ if __name__ == "__main__":
     #GROMIT:
     elif arg_ind == 40:
         d['dates'] = dict(lfp_mod_mc_reach_out = ['022315', '022415','022515','022615','022715','022815','030215'])
-        d['blocks'] = dict(lfp_mod_mc_reach_out= [['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bcdef'],['defghi'],['cdefg']])
+        d['blocks'] = dict(lfp_mod_mc_reach_out= [['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bcd'],['defghi'],['cdefg']])
         # BLOCKS=[['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bd'],['defghi'],['cdefg']]
 
         d['task_entry_dict_time_inds_fname'] = 'grom_prep_t1.mat'
@@ -302,10 +304,11 @@ if __name__ == "__main__":
         d['behav_fname']='pap_rev_grom_behav_t1'
         d['neur_fname'] = 'pap_rev_grom_neur_welch_t1'
         d['anim'] = 'grom'
+        d['channels'] = [74]
 
     elif arg_ind == 42:
         d['dates'] = dict(lfp_mod_mc_reach_out = ['022315', '022415','022515','022615','022715','022815','030215'])
-        d['blocks'] = dict(lfp_mod_mc_reach_out= [['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bcdef'],['defghi'],['cdefg']])
+        d['blocks'] = dict(lfp_mod_mc_reach_out= [['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bcd'],['defghi'],['cdefg']])
         # BLOCKS=[['defghijkl'],['befghij'],['bcdefhi'],['fgh'],['bd'],['defghi'],['cdefg']]
 
         d['task_entry_dict_time_inds_fname'] = 'grom_prep_t1_large_window.mat'
@@ -313,6 +316,7 @@ if __name__ == "__main__":
         d['behav_fname']='pap_rev_grom_behav_t1_large_window'
         d['neur_fname'] = 'pap_rev_grom_neur_welch_t1_large_window'
         d['anim'] = 'grom'
+        d['channels'] = [74]
 
     #GROM XY Control: 
     elif arg_ind == 43:
@@ -324,11 +328,12 @@ if __name__ == "__main__":
         d['behav_fname']='pap_rev_grom_behav_xy_t1'
         d['neur_fname'] = 'pap_rev_grom_neur_welch_xy_t1'
         d['anim'] = 'grom'
+        d['channels'] = [74]
 
-    mcd = mp.kinarm_lfpmod_data(**d)
+    #mcd = kinarm_lfpmod_data(**d) #COMMENTED 5-7 to produce ONLY neural signal files!
     
     #Get behav: 
-    mcd.get_behavior()
+    #mcd.get_behavior() #COMMENTED 5-7 to produce ONLY neural signal files!
     
     kw = dict(t_range=d['t_range'],use_go_file=True, spec_method='Welch')
     mcd.moving_window = d['moving_window']

@@ -36,6 +36,13 @@ class Neural_Hand_Reach(IsDescription):
     #long_neural_sig = Float32Col(shape=(5500, 5))
     long_power_sig = Float32Col(shape = (409, 103))
 
+class Neural_Hand_Reach_neur_only(Neural_Hand_Reach):
+    neural_sig = Float32Col(shape=(3500,5)) #time x channels
+    power_sig = IntCol()
+    long_neural_sig = Float32Col(shape=(5500, 5))
+    long_power_sig = IntCol()
+
+
 class Neural_Hand_Reach_small_f_step(Neural_Hand_Reach):
     trial_type = StringCol(2)
     task_entry = IntCol()
@@ -108,13 +115,19 @@ class manual_control_data(object):
             long_trials = False
             self.bp_filt = [10, 55]
 
+        get_neural_only = kwargs.pop('get_neural_only', False)
+
         bad_te = []
         for tsk in task_name:
             h5file = openFile(self.tdy_str + self.neur_fname + tsk + '.h5', mode="w", title='Cart, neural')
             if 'small_f_steps' in kwargs.keys():
                 table = h5file.createTable("/", 'neural', Neural_Hand_Reach_small_f_step, "Neural Table")
             else:
-                table = h5file.createTable("/", 'neural', Neural_Hand_Reach, "Neural Table")
+                if get_neural_only:
+                    table = h5file.createTable("/", 'neural', Neural_Hand_Reach_neur_only, "Neural Table")
+                else:
+                    table = h5file.createTable("/", 'neural', Neural_Hand_Reach, "Neural Table")
+            
             t1, t2 = task_entry_dict[tsk].shape
             if t1==1 and t2==1:
                 te_array = np.array([task_entry_dict[tsk][0,0]])
@@ -132,7 +145,7 @@ class manual_control_data(object):
                     kwargs['system'] = self.system
                     kwargs['moving_window'] = self.moving_window
                     kwargs['bp_filt'] = self.bp_filt
-
+                    kwargs['get_neural_only'] = get_neural_only
                     
                     files_ok, power_dict, trials, channels, bins, freq = ecsdh.get_plx_with_hdf_inds(tsk, te, start_times,**kwargs) 
                     col = gc.collect() #garbage collector
@@ -140,25 +153,33 @@ class manual_control_data(object):
                     if files_ok: 
                         for j in range(len(start_times)):
                             trl = table.row
-                            pxx = np.zeros(( power_dict[(tsk,channels[0])][j,:,:].shape[0], \
-                                             power_dict[(tsk,channels[0])][j,:,:].shape[1], \
-                                             len(channels)
-                                             ))
-                            #pxx = np.zeros(((346,20,11)))
-                            for ic, c in enumerate(channels):
-                                pxx[:,:,ic] = power_dict[(tsk,c)][j,:,:]
+                            if get_neural_only:
+                                tr, tm, ch = trials.shape
+                                if long_trials:
+                                    trl['long_neural_sig'] = trials[j, :, :]
+                                else:
+                                    trl['neural_sig'] = trials[j,:,:]
 
-                            tr, tm, ch = trials.shape
-                            ptm, pf, pch = pxx.shape
-                            f_trim = freq[freq< 100]
-                            f_trim_ix = freq<100
-
-                            if long_trials:
-                                #trl['long_neural_sig'] = trials[j, :, :]
-                                trl['long_power_sig'] = pxx[:, f_trim_ix, 0]
                             else:
-                                #trl['neural_sig'] = trials[j,:,:]
-                                trl['power_sig'] = pxx[:, f_trim_ix, 0]
+                                pxx = np.zeros(( power_dict[(tsk,channels[0])][j,:,:].shape[0], \
+                                                 power_dict[(tsk,channels[0])][j,:,:].shape[1], \
+                                                 len(channels)
+                                                 ))
+                                #pxx = np.zeros(((346,20,11)))
+                                for ic, c in enumerate(channels):
+                                    pxx[:,:,ic] = power_dict[(tsk,c)][j,:,:]
+
+                                tr, tm, ch = trials.shape
+                                ptm, pf, pch = pxx.shape
+                                f_trim = freq[freq< 100]
+                                f_trim_ix = freq<100
+
+                                if long_trials:
+                                    #trl['long_neural_sig'] = trials[j, :, :]
+                                    trl['long_power_sig'] = pxx[:, f_trim_ix, 0]
+                                else:
+                                    #trl['neural_sig'] = trials[j,:,:]
+                                    trl['power_sig'] = pxx[:, f_trim_ix, 0]
                             
                             trl['trial_type'] = tsk
                             trl['task_entry'] = te
@@ -170,10 +191,16 @@ class manual_control_data(object):
                         bad_te.append(te)
 
                     table.flush()
-                add_cols = h5file.createGroup(h5file.root, "columns", "Channels, Freq, Bins, Bad TEs")
-                h5file.createArray(add_cols, 'channels', np.array(channels))
-                h5file.createArray(add_cols, 'freq', freq)
-                h5file.createArray(add_cols, 'bins', bins)
+                if get_neural_only:
+                    add_cols = h5file.createGroup(h5file.root, "columns", "Bad TEs, t_range")
+                    h5file.createArray(add_cols, 't_range', t_range)
+                else:
+                    add_cols = h5file.createGroup(h5file.root, "columns", "Channels, Freq, Bins, Bad TEs")
+                    h5file.createArray(add_cols, 'channels', np.array(channels))
+                    h5file.createArray(add_cols, 'freq', freq)
+                    h5file.createArray(add_cols, 'bins', bins)
+                    h5file.createArray(add_cols, 't_range', t_range)
+
                 if len(bad_te)>0:
                     h5file.createArray(add_cols, 'bad_task_entries', np.array(bad_te))
                 else:
@@ -270,6 +297,7 @@ if __name__ == "__main__":
     # #d['task_entry_dict_fname'] = 'task_entries_trunc_dec14.mat'
 
     # mcd = manual_control_data(**d)
+    
 
     # #Get behav: 
     # mcd.get_behavior()

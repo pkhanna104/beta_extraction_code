@@ -37,9 +37,9 @@ class Neural_Hand_Reach(IsDescription):
     long_power_sig = Float32Col(shape = (409, 103))
 
 class Neural_Hand_Reach_neur_only(Neural_Hand_Reach):
-    neural_sig = Float32Col(shape=(3500,5)) #time x channels
+    neural_sig = Float32Col(shape=(3500,3)) #time x channels
     power_sig = IntCol()
-    long_neural_sig = Float32Col(shape=(5500, 5))
+    long_neural_sig = Float32Col(shape=(5500, 3))
     long_power_sig = IntCol()
 
 

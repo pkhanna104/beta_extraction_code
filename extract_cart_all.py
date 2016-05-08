@@ -14,7 +14,8 @@ if __name__ == '__main__':
                        task_entry_dict_fname='task_entries_upside_down_cart.mat',\
                        task_entry_dict_go = 'task_entries_upside_down_cart.mat._start_inds.mat')
 
-        d3 = d.update(d2)
+        d3 = d.copy()
+        d3.update(d2)
 
         import make_pytable_lfpmod_bmi3d as mp
         lfpd = mp.lfp_task_data(**d3)
@@ -34,7 +35,8 @@ if __name__ == '__main__':
                        task_entry_dict_fname='task_entries_targ1_cart.mat',\
                        task_entry_dict_go = 'task_entries_targ1_cart.mat._start_inds.mat',\
                        )
-        d3 = d.update(d2)
+        d3 = d.copy()
+        d3.update(d2)
 
         import make_pytable_lfpmod_bmi3d as mp
         lfpd = mp.lfp_task_data(**d3)
@@ -70,7 +72,8 @@ if __name__ == '__main__':
                        task_entry_dict_fname='task_entries_targ3_cart.mat',\
                        task_entry_dict_go = 'task_entries_targ3_cart.mat._start_inds.mat',\
                        )
-        d3 = d.update(d2)
+        d3 = d.copy()
+        d3.update(d2)
 
         import make_pytable_lfpmod_bmi3d as mp
         lfpd = mp.lfp_task_data(**d3)
@@ -98,7 +101,8 @@ if __name__ == '__main__':
                        task_entry_dict_fname='task_entries_targ7_cart.mat',\
                        task_entry_dict_go = 'task_entries_targ7_cart.mat._start_inds.mat',\
                        )
-        d3 = d.update(d2)
+        d3 = d.copy()
+        d3.update(d2)
 
         import make_pytable_lfpmod_bmi3d as mp
         lfpd = mp.lfp_task_data(**d3)
@@ -143,7 +147,8 @@ if __name__ == '__main__':
                task_entry_dict_fname='task_entries_cart_xy.mat',\
                task_entry_dict_go = 'ttask_entries_cart_xy_GO.mat',\
                )
-        d3 = d.update(d2)
+        d3 = d.copy()
+        d3.update(d2)
         
         import make_pytable_reach_bmi3d as mp
         mcd = mp.manual_control_data(**d3)

@@ -25,9 +25,9 @@ class Neural_Hand_Reach_kinarm(Neural_Hand_Reach):
 class Neural_Hand_Reach_kinarm_neur_only(tables.IsDescription):
     long_neural_sig = tables.Float32Col(shape = (5500, 1))
     neural_sig = tables.Float32Col(shape = (3500, 1))   
-    trial_type = StringCol(2)
-    task_entry = IntCol()
-    start_time = IntCol()
+    trial_type = tables.StringCol(2)
+    task_entry = tables.IntCol()
+    start_time = tables.IntCol()
 
 class Kin_Traces_kinarm(Kin_Traces):
     task_entry = tables.StringCol(7)
@@ -66,6 +66,7 @@ class kinarm_manual_control_data(object):
         tdy = datetime.date.today()
         self.tdy_str = tdy.isoformat()
         self.moving_window = kwargs.pop('moving_window', [.251, .011])
+        self.neural_sig_only = kwargs.pop('neural_sig_only', False)
 
     def make_neural(self, task_name, **kwargs):
         if 't_range' in kwargs.keys():
@@ -82,7 +83,8 @@ class kinarm_manual_control_data(object):
             self.long_trials = False
             self.bp_filt = [10, 55]
 
-        neural_sig_only = kwargs.pop('neural_sig_only', False)
+        neural_sig_only = self.neural_sig_only
+
         if neural_sig_only:
             self.neur_fname = self.neur_fname + 'neur_sig_only_'
 
@@ -155,16 +157,19 @@ class kinarm_manual_control_data(object):
                     for i_t in range(len(start_times)):
                         trl = table.row
                         if neural_sig_only:
+                            sgg = np.zeros((signal[ch_key].shape[1], len(self.channels)))
+                            for ic, c in enumerate(self.channels):
+                                sgg[:,ic] = signal['AD'+str(c)][i_t,:]
+                            
                             if self.long_trials:
                                 trl['long_neural_sig'] = sgg
+                            
                             else:
                                 trl['neural_sig'] = sgg
                         else:
                             pxx = np.zeros((Smtm.shape[1], Smtm.shape[2], len(self.channels)))
-                            sgg = np.zeros((signal[ch_key].shape[1], len(self.channels)))
                             for ic, c in enumerate(self.channels):
                                 pxx[:,:,ic] = smtm['AD'+str(c)][i_t,:,:]
-                                sgg[:,ic] = signal['AD'+str(c)][i_t,:]
                             if self.long_trials:
                                 #trl['long_neural_sig'] = sgg
                                 trl['long_power_sig_kinarm'] = pxx[:, f_trim_ix, 0]
